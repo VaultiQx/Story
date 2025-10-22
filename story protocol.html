@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surreal World Assets Commercial Contest</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Lucide icons for high-quality SVG icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Custom Styles based on Black, White, and Off-White theme */
+        :root {
+            --bg-offwhite: #F9F9F9; /* Off-White Background */
+            --card-white: #FFFFFF; /* White Card/Section Background */
+            --text-dark: #1A1A1A; /* Dark Text Color (Black) */
+            --subtle-gray: #CCCCCC; /* Light gray for subtle borders/dividers */
+            
+            /* UPDATED: Dark Gray/Black Accents for the animation system */
+            --accent-dark: #333333; /* Dark Gray Accent for buttons/animation */
+            --accent-blue: #666666; /* Medium Gray Accent (for hover/borders) */
+            --title-color: #1A1A1A; /* Deep Black for the main title */
+
+            /* Butterfly Colors */
+            --butterfly-color-1: #FF5733; /* Vivid Orange */
+            --butterfly-color-2: #33FF57; /* Bright Green */
+        }
+
+        body {
+            background-color: var(--bg-offwhite);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            min-height: 100vh;
+            color: var(--text-dark); 
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fixed Background Canvas for Interactive Digital Flow (FULL SCREEN) */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%; 
+            height: 100%; 
+            z-index: -1; 
+            pointer-events: none; 
+            opacity: 0.9; 
+            filter: blur(0.2px); 
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Scroll Animation Styles (Enhanced) --- */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(60px) scale(0.95); 
+            transition: all 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+        }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* --- Component Styles --- */
+        .infographic-card {
+            background-color: var(--card-white);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); 
+            border: 1px solid var(--subtle-gray);
+            transition: all 0.3s;
+        }
+
+        .infographic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); 
+            border-color: var(--accent-dark);
+        }
+
+        .cta-button {
+            background-color: var(--text-dark);
+            color: var(--bg-offwhite);
+            font-weight: 800;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .cta-button:hover {
+            background-color: var(--accent-dark); 
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--accent-dark); 
+        }
+
+        /* Pulse Animation updated for Black button */
+        @keyframes pulse-shadow {
+            0% { box-shadow: 0 0 0 0 rgba(51, 51, 51, 0.4); } 
+            50% { box-shadow: 0 0 0 15px rgba(51, 51, 51, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(51, 51, 51, 0); }
+        }
+
+        .cta-button-pulse {
+            animation: pulse-shadow 3s infinite; 
+        }
+        
+        /* --- Glitch Effect for Social Links on Hover (Retained) --- */
+        @keyframes glitch-shake {
+            0%, 100% { transform: translate(0, 0) rotate(0); }
+            20% { transform: translate(-1px, 1px) rotate(1deg); }
+            40% { transform: translate(1px, -1px) rotate(-1deg); }
+            60% { transform: translate(0.5px, 0.5px) rotate(0.5deg); }
+            80% { transform: translate(-0.5px, -0.5px) rotate(-0.5deg); }
+        }
+
+        .glitch-link {
+            transition: all 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glitch-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(51, 51, 51, 0.4);
+            animation: glitch-shake 0.4s 3;
+        }
+        
+        .glitch-link:hover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2) 50%, rgba(0,0,0,0.2) 50%);
+            background-size: 100% 4px;
+            animation: scanline 0.2s infinite;
+        }
+        
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+        
+        /* --- NEW: Digital Pulse Border Animation for Profile Card (Refined) --- */
+        @keyframes digital-pulse {
+            0% { box-shadow: 0 0 0px var(--accent-dark); }
+            50% { box-shadow: 0 0 15px rgba(51, 51, 51, 0.5), 0 0 25px rgba(26, 26, 26, 0.3); }
+            100% { box-shadow: 0 0 0px var(--accent-dark); }
+        }
+        
+        .pulse-border-card {
+            position: relative;
+            overflow: hidden;
+            background-color: var(--card-white);
+            border: 2px solid var(--accent-dark);
+            border-radius: 1.5rem;
+            animation: digital-pulse 5s infinite ease-in-out;
+            transition: all 0.3s;
+        }
+        
+        /* --- Butterfly Canvas Styling --- */
+        #butterfly-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            pointer-events: none; 
+            opacity: 0.8;
+        }
+        
+        /* --- NEW: Glitch Animation for STORY text --- */
+        @keyframes text-glitch {
+            0% { text-shadow: 2px 0 0 #FF0000, -2px 0 0 #0000FF; transform: translate(0, 0); }
+            25% { text-shadow: -2px 1px 0 #FF0000, 2px -1px 0 #0000FF; transform: translate(1px, -1px); }
+            50% { text-shadow: 1px -2px 0 #FF0000, -1px 2px 0 #0000FF; transform: translate(-1px, 1px); }
+            75% { text-shadow: -1px 1px 0 #FF0000, 1px -1px 0 #0000FF; transform: translate(0.5px, 0.5px); }
+            100% { text-shadow: 2px 0 0 #FF0000, -2px 0 0 #0000FF; transform: translate(0, 0); }
+        }
+        
+        .story-glitch-text {
+            color: var(--text-dark); 
+            animation: text-glitch 2s infinite linear alternate;
+            transition: all 0.1s ease;
+            position: relative;
+            /* Ensures the text stays sharp despite the shadow/movements */
+            transform-origin: center; 
+        }
+
+        .story-glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: var(--text-dark);
+            z-index: -1;
+            opacity: 0.1;
+            /* Reverse glitch for a stronger layered effect */
+            animation: text-glitch 3s infinite linear alternate-reverse; 
+        }
+        
+        /* Other utility styles kept */
+        #side-motion-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 3px; 
+            height: 100vh;
+            background: var(--text-dark); 
+            z-index: 5;
+            pointer-events: none;
+            overflow: hidden; 
+        }
+
+        @keyframes side-pulse-line {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { transform: translateY(100vh); opacity: 1; }
+            100% { transform: translateY(200vh); opacity: 0; }
+        }
+
+        #side-motion-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+            animation: side-pulse-line 6s linear infinite;
+        }
+
+        @media (max-width: 768px) {
+            #side-motion-line { display: none; }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- 1. Fixed Background Canvas for Interactive Digital Flow (AI Network) -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- 2. Side Motion Line (New Animation Element) -->
+    <div id="side-motion-line"></div>
+
+    <!-- 3. Content Wrapper (Scrollable) -->
+    <div class="content-wrapper p-6 md:p-16 flex flex-col items-center">
+        <div class="max-w-4xl w-full space-y-20"> 
+
+            <!-- 1. Header and Hero Section -->
+            <header class="text-center py-16 px-6 relative overflow-hidden bg-card-white rounded-2xl shadow-2xl shadow-gray-300 animate-on-scroll border border-subtle-gray">
+                <div class="relative z-10">
+                    <h2 class="text-sm tracking-widest uppercase font-semibold text-gray-600 mb-4">RocketSpace Initiative presents</h2>
+
+                    <h1 class="text-6xl sm:text-7xl font-extrabold leading-tight mb-10 text-text-dark">
+                        Lights, Camera, SURREAL
+                    </h1>
+                    
+                    <p class="text-xl sm:text-2xl font-light text-gray-700 max-w-2xl mx-auto mb-12">
+                        Surreal World Assets Commercial Contest: AI Savants Wanted!
+                    </p>
+
+                    <a href="https://app.gimi.co/en/campaigns/surreal-world-assets-commercial-contest" target="_blank" class="cta-button cta-button-pulse inline-block py-4 px-12 text-xl rounded-full shadow-2xl shadow-gray-500/50">
+                        Submit Your Ad and Win $2K!
+                    </a>
+                    <p class="mt-6 text-gray-500 text-sm font-medium">Submissions open: Oct 22–31</p>
+                </div>
+            </header>
+
+            <!-- 2. Core Details Section (Accent Bordered) -->
+            <section class="accent-section p-10 rounded-xl animate-on-scroll">
+                <h2 class="text-3xl font-extrabold mb-8 text-center text-gray-800">Contest Essentials</h2>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    
+                    <!-- Prize Pool Card -->
+                    <div class="infographic-card p-6 shadow-xl transition duration-300 hover:scale-[1.02]">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <i data-lucide="award" class="w-8 h-8 text-gray-600"></i>
+                            <h3 class="text-xl font-bold">Prize Pool</h3>
+                        </div>
+                        <p class="text-5xl font-extrabold text-black">$2,000</p>
+                        <p class="mt-3 text-gray-700 font-medium">Total prize pool for the top submission(s).</p>
+                    </div>
+
+                    <!-- Submission Timeline Card -->
+                    <div class="infographic-card p-6 shadow-xl transition duration-300 hover:scale-[1.02]">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <i data-lucide="clock" class="w-8 h-8 text-gray-600"></i>
+                            <h3 class="text-xl font-bold">Video Format</h3>
+                        </div>
+                        <ul class="space-y-3 text-gray-800">
+                            <li class="flex justify-between items-center border-b border-subtle-gray pb-2">
+                                <span class="font-medium">Submission Period:</span>
+                                <span class="font-semibold text-black">Oct 22 – Oct 31</span>
+                            </li>
+                            <li class="flex justify-between items-center pt-2">
+                                <span class="font-medium">Video Length:</span>
+                                <span class="font-semibold text-gray-800">15 – 60 seconds</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Judging Criteria Section (White Card) -->
+            <section class="infographic-card p-10 animate-on-scroll">
+                <div class="flex items-center space-x-4 mb-8">
+                    <i data-lucide="zap" class="w-8 h-8 text-gray-600"></i>
+                    <h2 class="text-3xl font-bold text-text-dark">Judging Criteria: Attention to Detail</h2>
+                </div>
+                
+                <p class="text-lg text-gray-600 mb-8">Execution and attention to detail will be judged. Be creative, be weird, but most importantly: sell the buildathon.</p>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-text-dark">
+                    <div class="p-4 bg-gray-100 rounded-xl flex items-center shadow-md border-l-4 border-gray-500 transition duration-300 hover:bg-gray-200" style="border-left-color: var(--accent-dark);">
+                        <span class="text-gray-700 mr-3 font-extrabold text-xl">•</span>
+                        <span class="font-medium">Smooth Transitions</span>
+                    </div>
+                    <div class="p-4 bg-gray-100 rounded-xl flex items-center shadow-md border-l-4 border-gray-500 transition duration-300 hover:bg-gray-200" style="border-left-color: var(--accent-dark);">
+                        <span class="text-gray-700 mr-3 font-extrabold text-xl">•</span>
+                        <span class="font-medium">Synced Sound, Music, and VO</span>
+                    </div>
+                    <div class="p-4 bg-gray-100 rounded-xl flex items-center shadow-md border-l-4 border-gray-500 transition duration-300 hover:bg-gray-200" style="border-left-color: var(--accent-dark);">
+                        <span class="text-gray-700 mr-3 font-extrabold text-xl">•</span>
+                        <span class="font-medium">Novel AI Techniques</span>
+                    </div>
+                    <div class="p-4 bg-gray-100 rounded-xl flex items-center shadow-md border-l-4 border-gray-500 transition duration-300 hover:bg-gray-200" style="border-left-color: var(--accent-dark);">
+                        <span class="text-gray-700 mr-3 font-extrabold text-xl">•</span>
+                        <span class="font-medium">Storytelling and Narrative</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 6. THE STORY SECTION (Now with Glitch Animation) -->
+            <section class="infographic-card p-10 md:p-12 animate-on-scroll flex items-center justify-center" 
+                style="border-radius: 1.5rem; min-height: 200px;">
+                
+                <div class="text-center relative z-10">
+                    <!-- Added story-glitch-text class and data-text for animation -->
+                    <h2 class="text-7xl sm:text-8xl font-extrabold tracking-tight uppercase story-glitch-text"
+                        data-text="STORY">
+                        STORY
+                    </h2>
+                </div>
+            </section>
+
+            <!-- 7. PROFILE AND CONTACT INFORMATION (Compact Design with Butterfly/Glow Animation) -->
+            <section id="profile-card" class="pulse-border-card p-6 sm:p-8 animate-on-scroll mt-8">
+                
+                <!-- Butterfly Canvas (New Element) -->
+                <canvas id="butterfly-canvas"></canvas>
+
+                <div class="relative z-30 text-center">
+                    <h2 class="text-3xl font-extrabold text-text-dark mb-1">VaultiQx</h2>
+                    <p class="text-base font-semibold text-gray-600 uppercase tracking-wider mb-4">Web3 Enthusiast & Crypto Explorer</p>
+                </div>
+                
+                <!-- Bio and Projects (Compact Layout) -->
+                <div class="relative z-30 mb-6 pb-4 border-b border-dashed border-subtle-gray">
+                    <p class="text-sm text-gray-800 italic text-center max-w-xl mx-auto mb-3">
+                        Believing in decentralization & community power. Building the future with:
+                    </p>
+
+                    <div class="flex flex-wrap justify-center gap-3 text-xs font-bold">
+                        <span class="bg-gray-100 text-text-dark px-3 py-1 rounded-full shadow-inner">@Tabichain</span>
+                        <span class="bg-gray-100 text-text-dark px-3 py-1 rounded-full shadow-inner">@GoKiteAI</span>
+                        <span class="bg-gray-100 text-text-dark px-3 py-1 rounded-full shadow-inner">@StoryProtocol</span>
+                    </div>
+                </div>
+
+                <!-- Social Media Links (Compact Layout with Glitch Effect) -->
+                <div class="relative z-30 flex flex-wrap gap-3 justify-center">
+                    
+                    <!-- Twitter Link (Interactive) -->
+                    <a href="https://x.com/VaultiQx" target="_blank" class="glitch-link flex items-center space-x-2 p-2 rounded-lg bg-text-dark text-bg-offwhite text-sm font-bold shadow-xl hover:bg-accent-dark">
+                        <i data-lucide="twitter" class="w-4 h-4"></i>
+                        <span>Twitter: @VaultiQx</span>
+                    </a>
+                    
+                    <!-- Telegram Handle (Interactive) -->
+                    <div class="glitch-link flex items-center space-x-2 p-2 rounded-lg bg-text-dark text-bg-offwhite text-sm font-bold shadow-xl hover:bg-accent-dark cursor-default">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Telegram: @VaultiQxx</span>
+                    </div>
+                    
+                    <!-- Discord Handle (Interactive) -->
+                    <div class="glitch-link flex items-center space-x-2 p-2 rounded-lg bg-text-dark text-bg-offwhite text-sm font-bold shadow-xl hover:bg-accent-dark cursor-default">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                        <span>Discord: vaultiqx</span>
+                    </div>
+                </div>
+            </section>
+            
+
+        </div>
+    </div>
+
+    <!-- 8. Footer and CTA -->
+    <footer class="text-center p-8 bg-card-white border-t border-subtle-gray shadow-inner">
+        <h3 class="text-xl md:text-2xl font-semibold text-text-dark mb-8">Ready to get creative and sell the buildathon?</h3>
+        <a href="https://app.gimi.co/en/campaigns/surreal-world-assets-commercial-contest" target="_blank" class="cta-button inline-block py-5 px-14 text-xl rounded-full shadow-2xl shadow-gray-500/50 transition duration-300 hover:scale-[1.05]">
+            View Full Details and Submit Now
+        </a>
+        <p class="mt-6 text-gray-500 text-sm font-medium">Powered by RocketSpace Initiative</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // --- Retrieve CSS variables for Canvas (FIX for CanvasGradient Error) ---
+        // Canvas API cannot directly read 'var(--color)' syntax, so we fetch the string values.
+        const rootStyles = getComputedStyle(document.documentElement);
+        const butterflyColor1 = rootStyles.getPropertyValue('--butterfly-color-1').trim(); // #FF5733
+        const butterflyColor2 = rootStyles.getPropertyValue('--butterfly-color-2').trim(); // #33FF57
+        // --- END FIX VARIABLES ---
+
+
+        // --- Intersection Observer for Scroll Animation ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("is-visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-on-scroll').forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        // --- Global Mouse Position Tracking (Used by particle system) ---
+        let globalMouse = { x: null, y: null };
+        window.addEventListener('mousemove', function(event) {
+            globalMouse.x = event.clientX;
+            globalMouse.y = event.clientY;
+        });
+        window.addEventListener('mouseleave', function() {
+            // Reset mouse position when cursor leaves the window
+            globalMouse.x = null;
+            globalMouse.y = null;
+        });
+
+        // --- Canvas 1: Interactive Wave Distortion Network Animation (Background) ---
+        function setupBackgroundAnimation() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            
+            const particleCount = 100; 
+
+            const REPULSION_RADIUS = 120; 
+            const REPULSION_FORCE = 5; 
+            const MAX_LINE_DIST = 150; 
+            const MAX_LINE_OPACITY = 0.5;
+            const PARTICLE_COLOR = 'rgba(51, 51, 51, 0.4)'; 
+            
+            let center = { x: 0, y: 0 };
+            let time = 0; 
+
+            function setCanvasSize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                center.x = canvas.width / 2;
+                center.y = canvas.height / 2;
+            }
+
+            function distance(p1, p2) {
+                const dx = p1.x - p2.x;
+                const dy = p1.y - p2.y;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+
+            class WaveParticle {
+                constructor() {
+                    this.initialX = Math.random() * canvas.width;
+                    this.initialY = Math.random() * canvas.height;
+                    this.x = this.initialX;
+                    this.y = this.initialY;
+                    
+                    this.angleFactorX = Math.random() * 0.001 + 0.0005;
+                    this.angleFactorY = Math.random() * 0.001 + 0.0005;
+                    this.amplitudeX = Math.random() * 50 + 20;
+                    this.amplitudeY = Math.random() * 50 + 20;
+
+                    this.size = Math.random() * 1.5 + 1;
+                }
+
+                update(t) {
+                    const waveOffsetX = Math.sin(t * this.angleFactorX) * this.amplitudeX;
+                    const waveOffsetY = Math.cos(t * this.angleFactorY) * this.amplitudeY;
+                    
+                    this.x = this.initialX + waveOffsetX;
+                    this.y = this.initialY + waveOffsetY;
+                    
+                    if (globalMouse.x !== null) {
+                        const dist_mouse = distance(this, globalMouse);
+
+                        if (dist_mouse < REPULSION_RADIUS) {
+                            const dx = this.x - globalMouse.x;
+                            const dy = this.y - globalMouse.y;
+                            
+                            const angle = Math.atan2(dy, dx);
+                            const proximity = (1 - dist_mouse / REPULSION_RADIUS) ** 2;
+
+                            this.x += Math.cos(angle) * proximity * REPULSION_FORCE;
+                            this.y += Math.sin(angle) * proximity * REPULSION_FORCE;
+                        }
+                    }
+                }
+
+                draw() {
+                    ctx.fillStyle = PARTICLE_COLOR;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            setCanvasSize();
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new WaveParticle());
+            }
+
+            function animate() {
+                ctx.fillStyle = 'rgba(249, 249, 249, 0.4)'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height); 
+
+                time += 1; 
+
+                particles.forEach(p => {
+                    p.update(time);
+                });
+
+                for (let i = 0; i < particleCount; i++) {
+                    const p1 = particles[i];
+                    for (let j = i + 1; j < particleCount; j++) {
+                        const p2 = particles[j];
+                        const dist = distance(p1, p2);
+
+                        if (dist < MAX_LINE_DIST) {
+                            const lineOpacity = 1 - (dist / MAX_LINE_DIST);
+                            
+                            ctx.strokeStyle = `rgba(51, 51, 51, ${lineOpacity * MAX_LINE_OPACITY})`; 
+                            ctx.lineWidth = 1.0 * lineOpacity; 
+
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                particles.forEach(p => {
+                    p.draw();
+                });
+
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                setCanvasSize();
+                particles.forEach(p => {
+                    p.initialX = Math.random() * canvas.width;
+                    p.initialY = Math.random() * canvas.height;
+                });
+            });
+        }
+        
+        // --- Canvas 2: Butterfly/Glow Animation (Local to Profile Card) ---
+        function setupButterflyAnimation() {
+            const card = document.getElementById('profile-card');
+            const canvas = document.getElementById('butterfly-canvas');
+            const ctx = canvas.getContext('2d');
+            let rect = card.getBoundingClientRect();
+
+            let mouseX = rect.width / 2;
+            let mouseY = rect.height / 2;
+            let butterflyX = mouseX;
+            let butterflyY = mouseY;
+            const ease = 0.15; // Smoothness factor
+            let lastTime = 0;
+            const size = 12; // Butterfly size
+
+            // Set initial canvas size
+            function setCanvasSize() {
+                rect = card.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            }
+
+            // Mouse move handler relative to the card
+            card.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+            });
+
+            // Recalculate size on resize
+            window.addEventListener('resize', setCanvasSize);
+            setCanvasSize(); // Initial call
+            
+            // Draw the butterfly (a glowing, pulsing circle)
+            function drawButterfly(x, y, t) {
+                // Smooth interpolation (easing)
+                butterflyX += (x - butterflyX) * ease;
+                butterflyY += (y - butterflyY) * ease;
+                
+                const pulseScale = 1 + Math.sin(t / 100) * 0.1; // Slow pulse effect
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(butterflyX, butterflyY, size * pulseScale, 0, Math.PI * 2);
+                
+                // Neon Glow Effect (Shadows)
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = butterflyColor1; 
+
+                
+                // Colorful Gradient Fill
+                const gradient = ctx.createRadialGradient(butterflyX, butterflyY, 0, butterflyX, butterflyY, size * pulseScale);
+                gradient.addColorStop(0, butterflyColor2); 
+                gradient.addColorStop(0.7, butterflyColor1); 
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); // Edge (Transparent)
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            function animateButterfly(timestamp) {
+                const elapsed = timestamp - lastTime;
+                lastTime = timestamp;
+
+                // Clear canvas with transparency for a slight trail effect
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                
+                // Draw only if mouse is relatively close to the canvas area
+                if (mouseX >= 0 && mouseX <= canvas.width && mouseY >= 0 && mouseY <= canvas.height) {
+                    drawButterfly(mouseX, mouseY, timestamp);
+                }
+
+                requestAnimationFrame(animateButterfly);
+            }
+
+            animateButterfly(0);
+        }
+
+        // Start all animations on window load
+        window.onload = function() {
+            setupBackgroundAnimation();
+            setupButterflyAnimation();
+        };
+    </script>
+</body>
+</html>
